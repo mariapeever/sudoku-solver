@@ -1,0 +1,418 @@
+Questions for Sudoku assignment, part b
+
+Task 7) What is printed in the console when you run this code in solve.js?
+
+var arr1 = genPseudoku([2,3,4,1],8); 
+console.log(visPseudoku(arr1));
+var arr2 = genPseudoku([4,2,3,1],10); 
+console.log(visPseudoku(arr2));
+console.log(visPseudoku(solvePseudoku(arr1)));
+console.log(visPseudoku(solvePseudoku(arr2)));
+
+Answer: 
+[[2,3," "," "],[4,1," ",3],[" ",2," "," "],[3," ",1," "]]
+-----------------
+| 2 | 3 |   |   |
+-----------------
+| 4 | 1 |   | 3 |
+-----------------
+|   | 4 |   |   |
+-----------------
+| 1 |   | 3 |   |
+-----------------
+-----------------
+|   | 2 |   |   |
+-----------------
+|   |   |   | 2 |
+-----------------
+|   |   | 1 |   |
+-----------------
+| 1 | 4 |   | 3 |
+-----------------
+-----------------
+| 2 | 3 | 4 | 1 |
+-----------------
+| 4 | 1 | 2 | 3 |
+-----------------
+| 3 | 4 | 1 | 2 |
+-----------------
+| 1 | 2 | 3 | 4 |
+-----------------
+-----------------
+| 4 | 2 | 3 | 1 |
+-----------------
+| 3 | 1 | 4 | 2 |
+-----------------
+| 2 | 3 | 1 | 4 |
+-----------------
+| 1 | 4 | 2 | 3 |
+-----------------
+
+Fig 1. Printed to the console when the code above is run.
+
+- var arr1 = genPseudoku([2,3,4,1],8); 
+- console.log(visPseudoku(arr1));
+
+-----------------
+| 2 | 3 |   |   |
+-----------------
+| 4 | 1 |   | 3 |
+-----------------
+|   | 4 |   |   |
+-----------------
+| 1 |   | 3 |   |
+-----------------
+
+Fig 2. Printed to the console when lines 1 and 2 of the code above are run.
+
+genPseudoku([2,3,4,1],8) generates a valid pseudoku puzzle from the row array [2,3,4,1] with 8 blank entries at random positions and returns a 2D array - in this case [[2,3," "," "],[4,1," ",3],[" ",4," "," "],[1," ",3," "]]. The generated 2D array satisfies all conditions for a pseudoku puzzle - every row, every column and every 2-bg-2 block can include all integers 1-4. The output of genPseudoku([2,3,4,1],8) is assigned to variable arr1, which is passed to visPseudoku(arr) as argument to be converted to a string and visualised as a pseudoku puzzle. The string output of visPseudoku(arr1) is then printed to the console by console.log(msg) with visPseudoku(arr1) as msg.
+
+genPseudoku(row,n) is exported from generate.js and imported into solve.js using the module.exports object of Node.js. The exports object allows exposure of the current module in solve.js. Assigned to the module.exports object in generate.js is an object of five functions, one of which genArray(row). genArray(row) is included in the exported object as genArray : genArray, where "genArray :" is a property of the module.exports object with genArray as a value, referring to genArray(row) as a function rather than its output. The five functions exported as a local module, including genArray(row), are loaded into solve.js using the require function with "./generate.js" as an argument, where "." denotes a root folder and "./" refers to a file within the same directory as solve.js, in this case - generate.js. The value of the generate object property genArray, i.e. function genArray(row), is then assigned to the variable genArray.
+
+genPseudoku(row,n), visPseudoku(arr) and console.log(msg) function as described in Questions-parta.txt Question 1 for console.log(visPseudoku(genPseudoku([1,3,4,2],7))), but in this case genPseudoku(row,n) accepts as inputs [2,3,4,1] as row and 8 as n. genArray(row) generates the 2D array [[2,3,4,1],[2,3,4,1],[2,3,4,1],[2,3,4,1]] from [2,3,4,1]. The generated values for i, j and k in permArray(arr) are the same - 2, 3 and 1 respectively. perm(arr,2,3,1) creates a new n array and stores values 2, 3, 1 as n[0], n[1] and n[3], i.e. [2,3,1].
+
+The first time, cyclicPerm(arr,row,n) accepts as inputs the 2D array [[2,3,4,1],[2,3,4,1],[2,3,4,1],[2,3,4,1]] as arr, 1 as row and 2 as n, and returns the 2D array [[2,3,4,1],[4,1,2,3],[2,3,4,1],[2,3,4,1]], in which row 1 is cyclically permutated by 2 elements from [2,3,4,1] to [4,1,2,3]. The second time, it accepts the array [[2,3,4,1],[4,1,2,3],[2,3,4,1],[2,3,4,1]] as arr, 2 as row and 3 as n, and returns [[2,3,4,1],[4,1,2,3],[3,4,1,2],[2,3,4,1]], in which row 2 is cyclically permutated by 3 elements from [2,3,4,1] to [3,4,1,2]. And finally, the third time, cyclicPerm(arr,row,n) accepts as inputs the array [[2,3,4,1],[4,1,2,3],[3,4,1,2],[2,3,4,1]], 3 as row and 1 as n, and returns [[2,3,4,1],[4,1,2,3],[3,4,1,2],[1,2,3,4]] as output, in which row 3 is cyclically permutated by 1 element from [2,3,4,1] to [1,2,3,4]. The combination [[2,3,4,1],[4,1,2,3],[3,4,1,2],[1,2,3,4]] passes both colCheck(arr) and squCheck(arr) and is returned by the  permArray(arr). The returned 2D array is then feeded into delEntries(arr,n) as arr, where n is 8. delEntries(arr,n) calls entriesToDel(size,n) to generate 8 entries at randomly positions for deletion. The returned array by entriesToDel(size,n) is now [[0,2],[0,3],[1,2],[2,0],[2,2],[2,3],[3,1],[3,3]]. The returned positions are replaced with the string " " to generate the 2D array [[2,3," "," "],[4,1," ",3],[" ",4," "," "],[1," ",3," "]], which is returned by genPseudoku([2,3,4,1],8) and assigned to variable arr1. visPseudoku(arr1) then accepts arr1 as an input and converts it to a string-based visualisation of a pseudoku puzzle and returns the string as output. The output of visPseudoku(arr1) is then printed to the console by console.log(msg) as shown above, where msg is the output of visPseudoku(arr1).
+
+- var arr2 = genPseudoku([4,2,3,1],10); 
+- console.log(visPseudoku(arr2));
+
+-----------------
+|   | 2 |   |   |
+-----------------
+|   |   |   | 2 |
+-----------------
+|   |   | 1 |   |
+-----------------
+| 1 | 4 |   | 3 |
+-----------------
+
+Fig 3. Printed to the console when lines 3 and 4 of the code above are run.
+
+
+genPseudoku([4,2,3,1],10) generates a valid pseudoku puzzle from the row array [4,2,3,1] with 10 blank entries at random positions and returns a 2D array - in this case [[" ",2," "," "],[" "," "," ",2],[" "," ",1," "],[1,4," ",3]]. The generated 2D array satisfies all conditions for a pseudoku puzzle - every row, every column and every 2-bg-2 block can include all integers 1-4. The output of genPseudoku([4,2,3,1],10) is assigned to variable arr2, which is passed to visPseudoku(arr) as argument to be converted to a string and visualised as a pseudoku puzzle. The string output of visPseudoku(arr2) is then printed to the console by console.log(msg) with visPseudoku(arr2) as msg.
+
+genPseudoku(row,n) is exported from generate.js and imported into solve.js using the module.exports object of Node.js as described above. genPseudoku(row,n), visPseudoku(arr) and console.log(msg) function as described in Questions-parta.txt Question 1 for console.log(visPseudoku(genPseudoku([1,3,4,2],7))), but in this case genPseudoku(row,n) accepts as inputs [4,2,3,1] as row and 10 as n. genArray(row) generates the 2D array [[4,2,3,1],[4,2,3,1],[4,2,3,1],[4,2,3,1]] from [4,2,3,1]. The generated values for i, j and k in permArray(arr) are the same - 2, 3 and 1 respectively - the same as for genPseudoku([1,3,4,2],7), genPseudoku([4,1,3,2],10) and genPseudoku([2,3,4,1],8). perm(arr,2,3,1) creates a new n array and stores values 2, 3, 1 as n[0], n[1] and n[3] again, i.e. [2,3,1].
+
+The first time, cyclicPerm(arr,row,n) accepts as inputs the 2D array [[4,2,3,1],[4,2,3,1],[4,2,3,1],[4,2,3,1]] as arr, 1 as row and 2 as n, and returns the 2D array [[4,2,3,1],[3,1,4,2],[4,2,3,1],[4,2,3,1]], in which row 1 is cyclically permutated by 2 elements from [4,2,3,1] to [3,1,4,2]. The second time, it accepts the array [[4,2,3,1],[3,1,4,2],[4,2,3,1],[4,2,3,1]] as arr, 2 as row and 3 as n, and returns [[4,2,3,1],[3,1,4,2],[2,3,1,4],[4,2,3,1]], in which row 2 is cyclically permutated by 3 elements from [4,2,3,1] to [2,3,1,4]. And finally, the third time, cyclicPerm(arr,row,n) accepts as inputs the array [[4,2,3,1],[3,1,4,2],[2,3,1,4],[4,2,3,1]], 3 as row and 1 as n, and returns [[4,2,3,1],[3,1,4,2],[2,3,1,4],[1,4,2,3]] as output, in which row 3 is cyclically permutated by 1 element from [2,3,4,1] to [1,4,2,3]. The combination [[4,2,3,1],[3,1,4,2],[2,3,1,4],[1,4,2,3]] passes both colCheck(arr) and squCheck(arr) and is returned by the permArray(arr). The returned 2D array is then feeded into delEntries(arr,n) as arr, where n is 10. delEntries(arr,n) calls entriesToDel(size,n) to generate 10 entries at randomly positions for deletion. The returned array by entriesToDel(size,n) is now [[0,0],[0,2],[0,3],[1,0],[1,1],[1,2],[2,0],[2,1],[2,3],[3,2]]. The returned positions are replaced with the string " " to generate the 2D array [[" ",2," "," "],[" "," "," ",2],[" "," ",1," "],[1,4," ",3]], which is returned by genPseudoku([4,2,3,1],10) and assigned to variable arr2. visPseudoku(arr2) then accepts arr2 as an input and converts it to a string-based visualisation of a pseudoku pussle and returns the string as output. The output of visPseudoku(arr2) is then printed to the console by console.log(msg) as shown above, where msg is the output of visPseudoku(arr2).
+
+- console.log(visPseudoku(solvePseudoku(arr1)));
+
+-----------------
+| 2 | 3 | 4 | 1 |
+-----------------
+| 4 | 1 | 2 | 3 |
+-----------------
+| 3 | 4 | 1 | 2 |
+-----------------
+| 1 | 2 | 3 | 4 |
+-----------------
+
+Fig 4. Printed to the console when line 5 of the code above is run.
+
+console.log(visPseudoku(solvePseudoku(arr1))) prints to the console a valid solution to genPseudoku([2,3,4,1],8), assigned to arr1 - a valid pseudoku puzzle generated by cyclic permutatations of row [2,3,4,1] with 8 blank entries at random positions. 
+
+solvePseudoku(array) accepts arr1 as input and calls blankEntries(array), where array is the same 2D array passed as argument to solvePseudoku(array) (arr1). blankEntries(array) returns a 2D array of all positions of blank entries in [[2,3," "," "],[4,1," ",3],[" ",1," "," "],[1," ",3," "]] in the form [[row,column],[row,column],...] repeating [row,column] n times, where n is the number of blank entries. blankEntries(array) traverses the arr1, searching linearly for blank entries, i.e. entries with value " ", and adds the row and column positions of each blank entry to an array [i,j], where i is the row number and j - the column number of the entry. Each [i,j] array is then added to the blank array. The blank array is then returned by the function - in this case [[0,2],[0,3],[1,2],[2,0],[2,2],[2,3],[3,1],[3,3]]. solvePseudoku(array) assigns the length of the returned array, i.e. the number of blank entries, to the variable numBlank. The maximum base 10 value that would generate a sequence of 3 with length equal to that of numBlank, i.e. the number of blank entries, is calculated as 4 to the power of numBlank - in this case 65536. Base 10 values from 0 to 4 to the power of numBlank are generated in a for loop. solvePseudoku(array) calls checkCandidate(array,candidate) within an if statement, where array is the 2D array passed as argument to solvePseudoku(array) (arr1) and candidate is output of makeCandidate(n,len), where n is i (0 to 4 ** numBlank) and length is numBlank. 
+
+makeCandidate(n,len) calls conversion(n, len), where n is i and len is numBlank passed to makeCandidate(n,len) as arguments in solvePseudoku(array), and assigns it to variable candidate. conversion(n, len) converts n (i) from base 10 to base 4 to generate a candidate array of length len (numBlank). In this case, the array generated and returned by conversion(n, len) is of length 8 - [3,0,1,2,0,1,1,3] - it represents the number 30120113 in base 4, which corresponds to 50711 in base 10 (i). makeCandidate(n,len) then increments all entries of the candidate array by 1 and generates a candidate array to be tested as a solution of the pseudoku, which accepts numbers 1 to 4 as entries - in this case [4,1,2,3,1,2,2,4]. The candidate array is then returned by the function and feeded into checkCandidate(array,candidate) as candidate. 
+
+checkCandidate(array,candidate) calls blankEntries(array), where array is the same 2D array passed as argument to solvePseudoku(array) (arr1) and assignes it to the variable blank. It then gets the length of blank and assignes it to the variable numBlank. Each blank entry in the 2D array arr1 is assigned a value from the candidate array in sequential order within a for loop. Positions of blank entries in the array (arr1) are extracted from blank, where blank[i][0] corresponds to row number and blank[i][1] to the column number of a blank entry and i increments by 1 to select each blank entry - in this case position [0,2] is assigned to 4, [0,3] to 1, [1,2] to 2, [2,0] to 3, [2,2] to 1, [2,3] to 2, [3,1] to 2 and [3,3] to 4. This generates the following 2D array from arr1 and candidate (candidate arr1) - [[2,3,4,1],[4,1,2,3],[3,4,1,2],[1,2,3,4]]. rowCheck(array), colCheck(arr) and squCheck(arr) are called within an if statement testing whether the 2D array (candidate arr1) satisfies all conditions of a pseudoku puzzle. rowCheck(array) traverses rows of the 2D array (candidate arr1) calling singleRowCheck(arr,row) for each row, where arr is the array (candidate arr1) and row is i. singleRowCheck(arr,row) tests for set membership of all integers 1-4 in each row and each time it returns true, it increments a count variable within the for loop of rowCheck(array), counting the number of rows satisfying the condition. If all rows satisfy condition 1 for a pseudoku, rowCheck(array) returns true. 
+
+colCheck(arr) and squCheck(arr) are imported from generate.js with the module.exports object and are exposed in solve.js as generate.colCheck, assigned to the variable colCheck, and generate.squCheck assigned to squCheck.  
+
+As described in Questions-parta.txt Question 1, colCheck(arr), where arr the 2D array (completed arr1), calls singleColCheck(arr,column) for each column in a for loop, where arr is the 2D array (candidate arr1) and column is the column number generated by the for loop - 0-3. singleColCheck(arr, column) tests a single column for set membership of 1-4. colCheck(arr) counts columns passing singleColCheck(arr, column) and if the count matches the column number of the 2D array (candidate arr1), i.e. the 2D array satisfies condition 2 for a pseudoku, colCheck(arr) returns true. 
+
+squCheck(arr) determines the square root of the length of the array (candidate arr1), which corresponds to the number of entries per row and per column that split the 2D array into squares of equal length and height. The function calls singleBlockCheck(arr,x1,y1,x2,y2), where arr is the 2D array accepted by squCheck(arr) as input (candidate arr1), x1 and y1 are the row and column numbers corresponding to the top left position of a single square and x2 and y2 are the row and column numbers corresponding to the bottom right position of the square. A two level nested for loop generates incremental values for calculating x1, y1, x2 and y2 for each square to be feeded into singleBlockCheck(arr,x1,y1,x2,y2). It traverses all squares in the 2D array (candidate arr1) with i as a row of squares, i.e. 0 - 1 for a 4x4 pseudoku (2 rows of squares), and j as a suqare index within the row of squares, i.e. 0 - 1 (2 squares per row of squares). x1 is generated by multiplying the index of the row of squares i by the number of entries per row of a square squCount (x1 = i*squCount). y1 is generated by multiplying the suqare index within the row of squares j by squCount (y1 = j*squCount). x2 is generated by adding squCount - 1 (-1 to count x1 as well) to x1 and y2 - by adding squCount - 1 (-1 to count y1 as well) to y1. In a pseudoku, x1 is then row 0 * 2 = 0 or 1 * 2 = 2, y1 is column 0 * 2 = 0 or 1 * 2 = 2, x2 is row 0 + 2 - 1 = 1 or 2 + 2 - 1 = 3 and y2 is column 0 + 2 - 1 = 1 or 2 + 2 - 1 = 3. 
+singleBlockCheck(arr,x1,y1,x2,y2) tests a single square for set membership of 1-4. squCheck(arr) counts squares passing singleBlockCheck(arr,x1,y1,x2,y2) and if the count matches the square number of the 2D array (candidate arr1), i.e. the 2D array satisfies condition 3 for a pseudoku, squCheck(arr) returns true.
+
+If rowCheck(array), colCheck(arr) and squCheck(arr) return true within the if statement of checkCandidate(array,candidate), checkCandidate(array,candidate) returns true within solvePseudoku(array), i.e. the 2D array (candidate arr1) satisfies all conditions for a pseudoku and is therefore a valid solution of arr1, which is passed to solvePseudoku(array) as array. solvePseudoku(array) then returns the successful 2D array as a solution of the puzzle - [[2,3,4,1],[4,1,2,3],[3,4,1,2],[1,2,3,4]]. 
+
+The solved pseudoku 2D array is passed to visPseudoku(arr) as arr for visualisation. visPseudoku(arr) accepts the returned 2D array as input and converts it to a string for output. As described in Questions-parta.txt Question 1. it contains a nested for loop, which adds a row of dashes "-" ("-" + (4*"-" per element)) to the beginning of each row 0-3 as well as to the end of row 3, a new line "\n" to the beginning of rows 0-3 following the dashes, a vertical line "|" before elements 0-3 and after element 3 of each row, and a single space " " on both sides of each element. The string is then printed to the console by console.log(msg) as shown above, where msg is the string output of visPseudoku(solvePseudoku(arr1)).
+
+- console.log(visPseudoku(solvePseudoku(arr2)));
+
+-----------------
+| 4 | 2 | 3 | 1 |
+-----------------
+| 3 | 1 | 4 | 2 |
+-----------------
+| 2 | 3 | 1 | 4 |
+-----------------
+| 1 | 4 | 2 | 3 |
+-----------------
+
+Fig 4. Printed to the console when line 6 of the code above is run.
+
+console.log(visPseudoku(solvePseudoku(arr2))) prints to the console a valid solution to genPseudoku([4,2,3,1],10), assigned to arr2 - a valid pseudoku puzzle generated by cyclic permutatations of row [4,2,3,1] with 10 blank entries at random positions. 
+
+solvePseudoku(array), visPseudoku(arr) and console.log(msg) function as described above for console.log(visPseudoku(solvePseudoku(arr1))), but in this case solvePseudoku(array) generates a solution to genPseudoku([4,2,3,1],10). solvePseudoku(array) accepts arr2. blankEntries(array) called by solvePseudoku(array) returns a 2D array of all blank entries within arr2
+[[" ",2," "," "],[" "," "," ",2],[" "," ",1," "],[1,4," ",3]], i.e. [[0,0],[0,2],[0,3],[1,0],[1,1],[1,2],[2,0],[2,1],[2,3],[3,2]]. The maximum base 10 value that would generate a sequence of 3 with length equal to that of numBlank (10) is 1048575, therefore i within the for loop of solvePseudoku(array) increments by 1 from 0 to 1048575. makeCandidate(n,len), where len is 10 calls conversion(n, len), which generates the base 4 value 3202031231 from 926573 in base 10 and returns the array [3,2,0,2,0,3,1,2,3,1] for further processing. makeCandidate(n,len) generates the candidate array [4,3,1,3,1,4,2,3,4,2] from [3,2,0,2,0,3,1,2,3,1], which is feeded into checkCandidate(array,candidate) as candidate. Blank entries within arr2 are assigned a value from the candidate array in a sequential order - in this case position [0,0] is assigned to 4, [0,2] to 3, [0,3] to 1, [1,0] to 3, [1,1] to 1, [1,2] to 4, [2,0] to 2, [2,1] to 3, [2,3] to 4 and [3,2] to 2. The result is the 2D array [[4,2,3,1],[3,1,4,2],[2,3,1,4],[1,4,2,3]], generated from arr2 and the candidate array. The 2D array passes rowCheck(array), colCheck(arr) and squCheck(arr) within checkCandidate(array,candidate) and is then returned by solvePseudoku(array) as a valid solution of arr2. The returned solution is passed to visPseudoku(arr) as arr for visualisation and the resulting string is passed to console.log(msg) as msg and printed to the console.
+
+-----
+Task 8) How could you improve, or completely change, the solution approach that solvePseudoku follows in this assignment so that any Pseudoku puzzle could be solved in fewer steps? 
+
+One possible direction: Think about how candidates are generated exhaustively in solvePseudoku and then think of an improvement
+
+Answer:
+
+An improved solution to solvePseudoku(array) is solvePseudoku18(array), included in solve.js. solvePseudoku18(array) includes functions: 
+
+- singleRowCyclicPerm(array)
+- generateOptions(array)
+- generateBlankRows(array,blank)
+- generateBlankCols(array,blank)
+- countSqus(array)
+- generateBlankSqus(array,blank)
+- generateCandidateRows(array,blank)
+- generateCandidateCols(array,blank)
+- generateCandidateSqus(array,blank)
+- generateCombs(array)
+- checkCols(blankRows,blankCols,rowCombs,colCombs)
+- checkSqus(array,blankRows,blankSqus,rowCombs,squCombs)
+- generateRowLen(rowCombs)
+- countPerms(array,rowLen)
+- generateSolution(rowCombs)
+- solve(array,permsCount,rowCombs)
+
+solvePseudoku18(array) also requires blankEntries(array) and checkCandidate(array,candidate).
+
+Example: 
+
+- var row = [1,2,3,4];
+- var sudoku5 = genPseudoku(row,8);
+
+- console.log(visPseudoku(sudoku5));
+
+-----------------
+| 1 |   | 3 | 4 |
+-----------------
+|   | 4 | 1 |   |
+-----------------
+| 2 |   |   | 1 |
+-----------------
+|   |   | 2 |   |
+-----------------
+
+- console.log(visPseudoku(solvePseudoku18(sudoku5)));
+
+-----------------
+| 1 | 2 | 3 | 4 |
+-----------------
+| 3 | 4 | 1 | 2 |
+-----------------
+| 2 | 3 | 4 | 1 |
+-----------------
+| 4 | 1 | 2 | 3 |
+-----------------
+
+Fig 6. Example followed to describe solvePseudoku18(array)
+
+solvePseudoku18(array) calls blankEntries(array), where array is the unsolved 2D array passed to solvePseudoku18(array) as array - a valid pseudoku puzzle with 0 to 16 blank entries - in this case, sudoku5 with 8 blank entries. As previously described, blankEntries(array) traverses the unsolved 2D array (sudoku5), searching linearly for blank entries, i.e. entries with value " ", and adds the row and column positions of each blank entry to an array as [i,j], where i is the row number and j - the column number of the entry. Each [row,column] array is then added to the blank array. The blank array is then returned by the function in the form [[row,column],[row,column],...] and assigned to the variable blank. In this case, blank is the following 2D array: 
+
+[ [ 0, 1 ],
+  [ 1, 0 ],
+  [ 1, 3 ],
+  [ 2, 1 ],
+  [ 2, 2 ],
+  [ 3, 0 ],
+  [ 3, 1 ],
+  [ 3, 3 ] ]
+
+solvePseudoku18(array) re-structures the blank array to generate 3D arrays of blank entries organised in rows of blank entries per row by calling generateBlankRows(array,blank), per column by calling generateBlankCols(array,blank) and per square by calling generateBlankSqus(array,blank). 
+
+generateBlankRows(array,blank) re-structures blank to split blank entries into rows, based on values from blank[j][0], where j is generated in a for loop traversing blank and position 0 of j is the row number of blank entries. generateBlankRows(array,blank) generates a 3D array with 4 rows at level 2, which correspond to rows 0-3 of the unsolved 2D array (sudoku5) as demonstrated below:
+
+[ [ [ 0, 1 ] ],
+  [ [ 1, 0 ], [ 1, 3 ] ],
+  [ [ 2, 1 ], [ 2, 2 ] ],
+  [ [ 3, 0 ], [ 3, 1 ], [ 3, 3 ] ] ]
+
+The returned 3D array is assigned to variable blankRows.
+
+generateBlankCols(array,blank) re-structures blank to split blank entries into columns, based on values from of blank[j][1], where j is generated in a for loop traversing blank and position 1 of j is the column number of blank entries. generateBlankCols(array,blank) generates a 3D array with 4 rows at level 2, which correspond to columns 0-3 of the unsolved 2D array (sudoku5) as demonstrated below:
+
+[ [ [ 1, 0 ], [ 3, 0 ] ],
+  [ [ 0, 1 ], [ 2, 1 ], [ 3, 1 ] ],
+  [ [ 2, 2 ] ],
+  [ [ 1, 3 ], [ 3, 3 ] ] ]
+
+The returned 3D array is assigned to variable blankCols. 
+
+generateBlankSqus(array,blank) re-structures blank to split blank entries into squares. A new empty array is created and assigned to variable blankSqus. Then, generateBlankSqus(array,blank) calls countSqus(array) with the unsolved 2D array (sudoku5) as array. countSqus(array) linearly searches for the square root of the length of the unsolved 2D array (sudoku5) within a for loop, incrementing i by 1 from 0 to the length of the unsolved 2D array (sudoku5). The square root i is assigned to variable count, which corresponds to the number of entries per row of a square in a 4x4 pseudoku - in this case 2. The output of countSqus(array) is assigned to variable squs in generateBlankSqus(array,blank). A two level nested for loop then traverses squares in the unsolved array (sudoku5), generating variables for positions x1, y1, x2 and y2 of the suqares, where x1 and y1 are the row and column numbers corresponding to the top left position of a single square and x2 and y2 are the row and column numbers corresponding to the bottom right position of the square. x1 is generated by multiplying the index of the row of squares i by the number of entries per row of a square squs (x1 = i*squs). y1 is generated by multiplying the square index (column) within the row of squares j by squs (y1 = j*squs). x2 is generated by adding squs - 1 (-1 to count x1 as well) to x1 and y2 - by adding squs - 1 (-1 to count y1 as well) to y1. A new array is added to blankSqus. A for loop then traverses blank incrementink k by 1 along its length and linearly searches for row and column values within blank[k][0] and blank[k][1] respectively in a single square, i.e. values between x1,y1 and x2,y2. The matching values from blank that belong to a specific square are added to the new array within blankSqu. The result is a 3D array of 4 rows, each corresponding to a square and each row stores positions of blank entries within the square as demonstrated below:
+
+[ [ [ 0, 1 ], [ 1, 0 ] ],
+  [ [ 1, 3 ] ],
+  [ [ 2, 1 ], [ 3, 0 ], [ 3, 1 ] ],
+  [ [ 2, 2 ], [ 3, 3 ] ] ]
+
+The returned 3D array for the unsolved 2D array (sudoku5) is assigned to variable blankSqus.
+
+A call to generateCandidateRows(array,blank) generates a 2D array of missing values from the a set of 1-4 for each row. First, it creates a new array and assignes it to variable candidate. Then, a for loop traverses rows of the unsolved array calling generateOptions(array) for each row. generateOptions(array) generates an array of values from 1 to the length of the unsolved array in a sequential order, i.e. [1,2,3,4] for a pseudoku puzzle. The output of generateOptions(array) is assigned to variable options. A second level of the for loop then traverses columns of the unsolved 2D array (sudoku5) and a third level traverses the newly generated options, linearly searching options for matching values within the row of the unsolved 2D array (sudoku5). Matching values are removed from options and the processed options array is added to the candidate array. The generated candidates per row 2D array for the unsolved 2D array (sudoku5) is:
+
+[ [ 2 ], [ 2, 3 ], [ 3, 4 ], [ 1, 3, 4 ] ]
+
+The returned 2D array of candiates per row is assigned to variable candidateRows.
+
+A call to generateCandidateCols(array,blank) generates a 2D array of missing values from the set of 1-4 for each column. generateCandidateCols(array,blank) calls generateOptions(array) for each column in a for loop. A second level of the loop  traverses rows and a third level - options, linearly searching options for matching values within the column of the unsolved 2D array (sudoku5). Matching values are removed from  options and the array is added to the candidate array. The generated candidates per column 2D array for the unsolved 2D array (sudoku5):
+
+[ [ 3, 4 ], [ 1, 2, 3 ], [ 4 ], [ 2, 3 ] ]
+
+The returned 2D array of candiates per column is assigned to variable candidateCols.
+
+A call to generateCandidateSqus(array,blank) generates a 2D array of missing values from the set of 1-4 for each suqre. generateCandidateSqus(array,blank) traverses squares in a two level nested for loop. A call to generateOptions(array) for each square is assigned to variable options and variables x1, y1, x2 and y2 are defined as described for generateBlankSqus(array,blank). A third and forth level of the loop traverse entries within each square and a fifth level - options, linearly searching options for matching values within the square of the unsolved 2D array (sudoku5). Matching values are removed from  options and the array is added to the candidate array. The generated candidates per square 2D array for the unsolved 2D array (sudoku5) is:
+
+[ [ 2, 3 ], [ 2 ], [ 1, 3, 4 ], [ 3, 4 ] ]
+
+The returned 2D array of candiates per square is assigned to variable candidateSqus.
+
+A call to generateCombs(array) with candidateRows as array generates all combinations of candidate values for each row non-exhaustively by cyclic permutation and assignment. A new empty array is created and assigned to variable combs. A for loop then traverses rows of candidateRows as array setting variables levels, ind, numCombs and arrayCopy for each row. A new empty array is created and assigned to variable levels, ind is set to 0, numCombs - to 1 and arrayCopy is a copy of the candidateRows row at index i. A while loop generates an array with length equal to that of row i, in which each entry corresponds to a sequential step in calculating the factorial of row i's length. Values are added to the beginning of the levels array, e.g. the length of candidateRows[3] is 3 and therefore the value added first is 1, the second one is 2 (1*2 = 2) and third is 6 (2*3 = 6). The array in its completed form is [6,2,1]. A new array is added to the combs array to store combinations for row i. A second level nested for loop then traverses the levels array and a third level increments k from 0 to levels[0] - in this case 6, corresponding to the number of combinations to be generated. If j is equal to 0, a new array is added to combs[i] of length equal to that of arrayCopy or the number of blank entries in row i. If k % levels[j+1] is equal to 0 and k is greater than 0, arrayCopy is cyclically permutated by 1 element, e.g. for j equal to 0 (row 0), k % 2 (levels[j+1]) is equal to 0 and k is greater than 0 if k is equal to 2 or 4, therefore [1,3,4] (arrayCopy) is cyclically permutated to [3,4,1] if k is equal to 2 and to [4,1,3] if k is equal to 4. combs[i][k][j], i.e. entry j from combination k for row i, is then assigned to arrayCopy[j]. For row 1 (i = 1), this results in the following array:
+
+[ [ 1,  ,   ],
+  [ 1,  ,   ],
+  [ 3,  ,   ],
+  [ 3,  ,   ],
+  [ 4,  ,   ],
+  [ 4,  ,   ] ],
+
+For j equal to 1, j % 1 (levels[j+1]) is equal to 0 and k is greater than 0 if k is equal to 1, 2, 3, 4, 5 or 6. [4,1,3] is not initially cyclically permutated to [1,3,4] since k is equal to 0. Another step is added to ensure the validity of combinations in terms of condition 1 for a pseudoku, i.e. set membership of numbers 1 to 4 in each row with no repetition. A new variable count is created is set to 0. A two level nested for loop then traverses previous entries (j) in the current combination equal number of times to the number of previous entries, linearly searching for matches to arrayCopy[j] - in this case combs[1][0], i.e. 1, is compared to arrayCopy[j] where j is equal to 1, i.e. 1 from [4,1,3]. If a match is found, arrayCopy is cyclically permutated by 1 element, count is incremented and another search commences starting from j equal to 0. The process repeats until the last previous entry is compared to arrayCopy[j] and no match is found. In this case, [4,1,3] is cyclically permutated by 1 element to [1,3,4] at this step and combs[1][0][1] is assigned to arrayCopy[1], i.e. 2. combs[1][0][1] becomes [1,3, ]. The same repeats to generate all combinations of possible values of blank entries in each row non-exhaustively. The generated 3D array of combinations per row (combs) for the unsolved 2D array (sudoku5) is: 
+
+[ [ [ 2 ] ],
+  [ [ 2, 3 ], [ 3, 2 ] ],
+  [ [ 3, 4 ], [ 4, 3 ] ],
+  [ [ 1, 3, 4 ],
+    [ 1, 4, 3 ],
+    [ 3, 1, 4 ],
+    [ 3, 4, 1 ],
+    [ 4, 1, 3 ],
+    [ 4, 3, 1 ] ] ]
+
+The returned 3D array of combinations per row is assigned to variable rowCombs.
+
+If the number of blank entries in the unsolved 2D array (sudoku5) is not equal to the number of entries (i.e. 16), generateCombs(array) is called two further times to generate all combinations of possible values of blank entries per column and per square.
+
+generateCombs(array) with candidateCols as array generates the following 3D array of combinations, which is assigned to variable colCombs:
+
+[ [ [ 3, 4 ], [ 4, 3 ] ],
+  [ [ 1, 2, 3 ],
+    [ 1, 3, 2 ],
+    [ 2, 1, 3 ],
+    [ 2, 3, 1 ],
+    [ 3, 1, 2 ],
+    [ 3, 2, 1 ] ],
+  [ [ 4 ] ],
+  [ [ 2, 3 ], [ 3, 2 ] ] ]
+
+generateCombs(array) with candidateSqus as array generates the following 3D array of combinations, which is assigned to variable squCombs:  
+
+[ [ [ 2, 3 ], [ 3, 2 ] ],
+  [ [ 2 ] ],
+  [ [ 1, 3, 4 ],
+    [ 1, 4, 3 ],
+    [ 3, 1, 4 ],
+    [ 3, 4, 1 ],
+    [ 4, 1, 3 ],
+    [ 4, 3, 1 ] ],
+  [ [ 3, 4 ], [ 4, 3 ] ] ]
+
+Within the same if statement, rowCombs is processed by checkCols(blankRows,blankCols,rowCombs,colCombs) and checkSqus(array,blankRows,blankSqus,rowCombs,squCombs) to remove implausible combinations based on column and square values.
+
+A call to checkCols(blankRows,blankCols,rowCombs,colCombs), where blankRows is blankRows, blankCols is blankCols, rowCombs is rowCombs and colCombs is colCombs, traverses rowCombs in a nested two level for loop, incrementing k for rows of rowCombs and l for combinations within rowCombs[k]. Within it, another for loop traverses blankRows[k] incrementing t, within which variable matchRow is set to false and another for loop traverses blankCols[blankRows[k][t][1]] incrementing d and linking blankRows[k][t][1] (blank entry column) to a row of combinations in blankCols. An if statement then searches linearly for a match between blankRows[k][t] and blankCols[blankRows[k][t][1]][d], i.e. a blank entry in row k in the form [row,column] matching a blank entry in row blankRows[k][t][1] (blankRows[k][t] column value) of blankCols, e.g. a match such as [3,1] in blankRows[3][1] and [3,1] in blankCols[1][2]. Within the if statement, another for loop traverses colCombs[blankRows[k][t][1]], i.e. the row of colCombs, which corresponds to the column value in blankRows[k][t], e.g. for blank entry [3,1], it traverses colCombs[1]. An if statement then tests whether rowCombs[k][l][t], i.e. entry t from combination l for row k is equal to colCombs[blankRows[k][t][1]][b][d], i.e. entry d from combination b for column blankRows[k][t][1], which creates a link between the specified position in rowCombs and colCombs.
+
+For instance, rowCombs[k] for blank entry [3,1] is rowCombs[3]: 
+
+[ [ 1, 3, 4 ],
+  [ 1, 4, 3 ],
+  [ 3, 1, 4 ],
+  [ 3, 4, 1 ],
+  [ 4, 1, 3 ],
+  [ 4, 3, 1 ] ]
+
+Combinations for row 1 include l 0-5, i.e. [1,3,4], [1,4,3], [3,1,4], [3,4,1], [4,1,3] and [4,3,1]. 
+
+colCombs[blankRows[k][t][1]] is then colCombs[1]:
+
+[ [ 1, 2, 3 ],
+  [ 1, 3, 2 ],
+  [ 2, 1, 3 ],
+  [ 2, 3, 1 ],
+  [ 3, 1, 2 ],
+  [ 3, 2, 1 ] ],
+
+Combinations for column 2 include b 0-5 [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2] and [3,2,1]. 
+
+The link between position [3,1] in rowCombs and colCombs is the position of [3,1] within blankRows (row 3 entry 1 - blankRows[3][1]), for rowCombs, i.e. row 3, combination 0-5, entry 1 (rowCombs[3][0-5][1]), and its position within blankCols (row 1 entry 2 - blankCols[1][2]) for colCombs, i.e. row 1 combination 0-5 entry 2 (colCombs[1][0-5][2]). Each value for position [3,1] within rowCombs is checked against the corresponding values for blank entry [3,1] in colCombs for plausibility, i.e. 3 from [1,3,4] (rowCombs[3][0][1]) is checked against 3 in [1,2,3] and since a match is found, the combination is not implausible and is not to be removed. Variable matchRow is assigned to true and l increments by 1. 4 in [1,4,3] is then checked against 3 in [1,2,3], 2 in [1,3,2], 3 in [2,1,3], 1 in [2,3,1], 2 in [3,1,2] and 1 in [3,2,1]. Since no match is found matchRow remains false. If matchRow is set to false and rowCombs[k][l][t], i.e. entry t from combination l for row k, is not equal to colCombs[blankRows[k][t][1]][b][d], i.e. entry d from combination b for column blankRows[k][t][1], variable spliced is set to true and the combination l is removed from rowCombs[k] - in this case combination [1,4,3] is removed from rowCombs[3]. 
+
+Since combination rowCombs[3][1] is removed and spliced is set to true, incrementing t executes an if statement, which resets spliced to false and t to 0. If the non-matching entry at position t is the last entry in a combination, spliced is set to true and l is greater than 0, incrementing l executes an if statement, decrementing l by 1. If the non-matching t is the last entry within the penultimate l of row k, the last l is given index l-1, which leads to incrementing k before entries t within the last l have been checked against their corresponding colCombs values. To prevent this, if spliced is set to true, incrementing k executes an if statement, decrementing k by 1. The process continues until all combinations within rowCombs have been checked for plausibility against corresponding combinations in colCombs.
+
+The call to checkCols outputs a 3D array, in which all combinations would satisfy conditions 1 and 2 for a pseudoku as a candidate solution: 
+
+[ [ [ 2 ] ],
+  [ [ 2, 3 ], [ 3, 2 ] ],
+  [ [ 3, 4 ], [ 4, 3 ] ],
+  [ [ 1, 3, 4 ],
+    [ 1, 4, 3 ],
+    [ 3, 1, 4 ],
+    [ 3, 4, 1 ],
+    [ 4, 1, 3 ],
+    [ 4, 3, 1 ] ] ]
+
+In this case, there are multiple solution combinations that could pass both rowCheck(array) and colCheck(arr). The returned array replaces the rowCombs array. 
+
+A call to checkSqus(array,blankRows,blankSqus,rowCombs,squCombs), where array is the unsolved 2D array (sudoku5), blankRows is blankRows, blankSqus is blankSqus, rowCombs is rowCombs and squCombs is squCombs, sets variables squs to countSqus(array), where array is the unsolved 2D array (sudoku5), and squInd to 0. A two level nested for loop traverses all squares incrementing a for rows of squares and incrementing b for square index (column) within a row of squares. Variable squInd increments by 1 for each square and squInd - 1 is used as square index. Variables x1, y1, x2 and y2 are defined as described for generateBlankSqus(array,blank). A third level for loop traverses rows within the current square (squInd) incrementing j from x1 (row of top left position of the square) to x2 (row of bottom right position of the square), within which a forth level for loop traverses blankRows[j], i.e. blank entries for rows x1 to x2, incrementing t. A fifth level for loop then traverses blankSqus[squInd - 1] incrementing l, where squInd - 1 is the index of the square, which corresponds to a row of blank entries within the square in blankSqus, i.e. row squInd - 1. An if statement is linearly searching for a match between blankRows[j][t] and blankSqus[squInd - 1][l] to match the blank entries, i.e. a blank entry in row j of blankRows matching a blank entry in row squInd - 1 (square index) of blankSqus, e.g. a match such as [3,1] in blankRows[3][1] and [3,1] in blankSqus[2][2] (a position within the bottom left square of the pseudoku). Within the if statement, a sixth level for loop then traverses rowCombs[blankRows[j][t][0]], linking the position of a blank entry to a row in rowCombs, e.g. for [3,1], a corresponding row is rowCombs[3]. 
+
+[ [ 1, 3, 4 ],
+  [ 1, 4, 3 ],
+  [ 3, 1, 4 ],
+  [ 3, 4, 1 ],
+  [ 4, 1, 3 ],
+  [ 4, 3, 1 ] ] ]
+
+A seventh level for loop then traverses squCombs[squInd - 1] incrementing d. For [3,1], blankSqus[squInd - 1] corresponds to squCombs[2]:
+
+[ [ 1, 3, 4 ],
+  [ 1, 4, 3 ],
+  [ 3, 1, 4 ],
+  [ 3, 4, 1 ],
+  [ 4, 1, 3 ],
+  [ 4, 3, 1 ] ],
+
+Combinations for square 2 include d 0-5 [1,3,4], [1,4,3], [3,1,4], [3,4,1], [4,1,3] and [4,3,1].  
+
+The link between position [3,1] in rowCombs and squCombs is the position of [3,1] within blankRows (row 3 entry 1 - blankRows[3][1]), for rowCombs, i.e. row 3 combination 0-5 entry 1 (rowCombs[3][0-5][1]), and its position within blankSqus (row 2 entry 2 - blankSqus[2][2]) for squCombs, i.e. row 2 combination 0-5 entry 2 (squCombs[2][0-5][2]). Each value for position [3,1] within rowCombs is checked against the corresponding values for blank entry [3,1] in squCombs for plausibility, i.e. 3 from [1,3,4] (rowCombs[3][0][1]) is checked against 4 in [1,3,4] and 3 in [1,4,3] and since a match is found, the combination is not implausible and is not to be removed. Variable matchRow is assigned to true and c increments by 1. 4 in [1,4,3] is then checked against 4 in [1,3,4] and a match is found again. If no match is found, matchRow remains false. If matchRow is set to false and rowCombs[blankRows[j][t][0]][c][t], i.e. entry t from combination c for row blankRows[j][t][0] is not equal to squCombs[squInd - 1][d][l], i.e. entry l from combination d for square (row in squCombs) squInd - 1, variable spliced is set to true and combination c is removed from rowCombs[blankRows[j][t][0]].
+
+If a combination is removed and spliced is set to true, incrementing t executes an if statement, which resets spliced to false and t to 0. The process continues until all combinations within rowCombs have been checked for plausibility against corresponding combinations in squCombs.
+
+The call to checkSqus outputs a 3D array, in which all combinations would satisfy conditions 1 and 3 for a pseudoku, but since checkSqus is processing the output array of checkCols, which satisfies conditions 1 and 2 for a pseudoku, the returned 3D array would satisfy all 3 conditions as a candidate solution: 
+
+[ [ [ 2 ] ],
+  [ [ 3, 2 ] ],
+  [ [ 3, 4 ], [ 4, 3 ] ],
+  [ [ 1, 3, 4 ], [ 1, 4, 3 ], [ 3, 1, 4 ], [ 4, 1, 3 ] ] ]
+
+In this case, there are multiple combinations that would pass all checks, including rowCheck(array), colCheck(arr) and squCheck(arr). rowCombs is assigned to the returned array.
+
+A call to countPerms(array,rowLen), where array is the unsolved 2D array (sudoku5) and rowLen is output of generateRowLen(rowCombs), where rowCombs is rowCombs, generates an array of row indices from rowCombs to be cyclically permutated by 1 element in a sequential order to generate all combinations of solutions from rowCombs. generateRowLen(rowCombs) generates an array of lengths of rows from rowCombs. If the length of a row is 0, however, it is counted as a length of 1. countPerms(array,rowLen) then generates permsCount in a four level nested for loop incrementing i rowLen[0] times, j - rowLen[1] times, k - rowLen[2] times and l - rowLen[3] (lengths of rows 0-3 or 1 if length is 0). The output of countPerms(array,rowLen) is assined to permsCount. 
+
+Finally, a call to solve(array,permsCount,rowCombs), where array is the unsolved 2D array, permsCount is permsCount and rowCombs is rowCombs, traverses permsCount. For each iteration, generateSolution(rowCombs), where rowCombs is rowCombs, traverses rowCombs incrementing i, generating a solution from the head of each row (rowCombs[i][0]) by adding entries from rowCombs[i][0] to the array solution in a for loop incrementing j by 1 per entry (rowCombs[i][0][j]). 
+
+checkCandidate(array, candidate), where candidate is the array solution, functions as described for Task 7 - assigns values from the solution candidate to blank entries, and if the solved array passes rowCheck(array), colCheck(arr) and squCheck(arr), it returns true. If the solved array does not satisfy all conditions for a pseudoku, blank entires are re-assigned to a blank space - " " and output of checkCandidate(array, solution) is false.
+
+If checkCandidate(array, candidate) in solve(array,permsCount,rowCombs) returns false, the row of rowCombs at index permsCount[i] is cyclically permutated by 1 element (if its length is greater than 1) to generate a new solution combination to be tested.
+
+If the solved array passes all conditions of checkCandidate(array, candidate), it is returned by solvePseudoku18(array) as a valid solution, satisfying all conditions 1-3 for a pseudoku puzzle.
+
+In this case, the output of solvePseudoku18(array) is the 2D array:
+
+[[1,2,3,4],[3,4,1,2],[2,3,4,1],[4,1,2,3]].
+
+Visualised by visPseudoku(solvePseudoku18(sudoku5)), the solved pseudoku is printed to the console as:
+
+-----------------
+| 1 | 2 | 3 | 4 |
+-----------------
+| 3 | 4 | 1 | 2 |
+-----------------
+| 2 | 3 | 4 | 1 |
+-----------------
+| 4 | 1 | 2 | 3 |
+-----------------
+
