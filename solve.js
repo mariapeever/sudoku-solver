@@ -84,7 +84,7 @@ function blankEntries(array) {
 	// this function should return an array
 	var numRows = array.length;
     var numCols = array[0].length;
-    var blank = new Array();
+    var blank = [];
 
     for (let i = 0; i < numRows; i++) {
         for (let j = 0; j < numCols; j++) {
@@ -142,7 +142,7 @@ function solvePseudoku(array) {
 // WRITE YOUR TESTING CODE BELOW HERE
 
 // Task 12
-// var row = [1, 2, 3, 4];
+var row = [1, 2, 3, 4];
 // var arr = genArray(row);
 // var sudoku0 = genPseudoku(row,5);
 
@@ -174,7 +174,7 @@ function solvePseudoku(array) {
 // console.log(sudoku2);
 
 // // Task 16
-// var sudoku3 = genPseudoku(row,7);
+var sudoku3 = genPseudoku(row,7);
 // console.log(solvePseudoku(sudoku3));
 // var sudoku4 = genPseudoku(row,10);
 // console.log(solvePseudoku(sudoku4));
@@ -204,7 +204,7 @@ function solvePseudoku18(array) {
 	function generateOptions(array) {
 
 		// generate options for blank entries
-		var options = new Array();
+		var options = [];
 		for (let i = 1; i <= array.length; i++) {
 			options.push(i);
 		}
@@ -214,9 +214,9 @@ function solvePseudoku18(array) {
 	function generateBlankRows(array,blank) {
 
 		// generate options for blank entries by row/column
-		var blankArr = new Array();
+		var blankArr = [];
 		for (let i = 0; i < array.length; i++) {
-			blankArr.push(new Array());
+			blankArr.push([]);
 			for (let j = 0; j < blank.length; j++) {
 				if (blank[j][0] == i) {
 					blankArr[blankArr.length - 1].push(blank[j]);
@@ -229,9 +229,9 @@ function solvePseudoku18(array) {
 	function generateBlankCols(array,blank) {
 
 		// generate options for blank entries by row/column
-		var blankArr = new Array();
+		var blankArr = [];
 		for (let i = 0; i < array.length; i++) {
-			blankArr.push(new Array());
+			blankArr.push([]);
 			for (let j = 0; j < blank.length; j++) {
 				if (blank[j][1] == i) {
 					blankArr[blankArr.length - 1].push(blank[j]);
@@ -244,19 +244,14 @@ function solvePseudoku18(array) {
 	function countSqus(array) {
 
 		// count squares per row/column
-		var count;
-		for (let i = 0; i < array.length; i++) {
-			if (i**2 == array.length) {
-				count = i;
-			} 
-		}
-		return count;
+		
+		return array.length ** 0.5;
 	}
 
 	function generateBlankSqus(array,blank) {
 
 		// generate options for blank entries by square
-		var blankSqus = new Array();
+		var blankSqus = [];
 		var squs = countSqus(array);
 
 		for (let i = 0; i < squs; i++) {
@@ -265,7 +260,7 @@ function solvePseudoku18(array) {
 				let y1 = j*squs;
 				let x2 = i*squs + squs - 1;
 				let y2 = j*squs + squs - 1;
-				blankSqus.push(new Array());
+				blankSqus.push([]);
 				for (let k = 0; k < blank.length; k++) {
 					if (blank[k][0] >= x1 && blank[k][0] <= x2 && 
 					   blank[k][1] >= y1 && blank[k][1] <= y2) {
@@ -280,7 +275,7 @@ function solvePseudoku18(array) {
 	function generateCandidateRows(array,blank) {
 
 		// generate candidate entries per row
-		var candidate = new Array();
+		var candidate = [];
 		for (let i = 0; i < array.length; i++) {
 			let options = generateOptions(array);
 			for (let j = 0; j < array.length; j++) {
@@ -303,7 +298,7 @@ function solvePseudoku18(array) {
 	function generateCandidateCols(array,blank) {
 
 		// generate candidate entries per column
-		var candidate = new Array();
+		var candidate = [];
 		for (let i = 0; i < array.length; i++) {
 			let options = generateOptions(array);
 			for (let j = 0; j < array.length; j++) {
@@ -327,7 +322,7 @@ function solvePseudoku18(array) {
 		
 		// generate candidate entries per square
 		var squs = countSqus(array);
-		var candidate = new Array();
+		var candidate = [];
 		
 		for(var i = 0; i < squs; i++) {
 			for(var j = 0; j < squs; j++) {
@@ -360,10 +355,10 @@ function solvePseudoku18(array) {
 	function generateCombs(array) {
 
 		// generate non-exhaustive combinations
-		var combs = new Array();
+		var combs = [];
 		for (let i = 0; i < array.length; i++) {
 			
-			let levels = new Array();
+			let levels = [];
 			let ind = 0;
 			let numCombs = 1;
 			let arrayCopy = array[i].slice();
@@ -372,7 +367,7 @@ function solvePseudoku18(array) {
 				levels.unshift(numCombs *= ++ind);
 			} 
 
-			combs.push(new Array());
+			combs.push([]);
 
 			for (var j = 0; j < levels.length; j++) {
 				for (var k = 0; k < levels[0]; k++) {
@@ -407,12 +402,18 @@ function solvePseudoku18(array) {
 		// check rows and columns
 		var spliced;
 		var matchRow;
+		var slicedRow;
+
 		for(let k = 0; k < rowCombs.length; k++) {
-			if(spliced) {
+			if(spliced && k > 0) {
+				slicedRow = true;
 				k--;
 			}
 			for(let l = 0; l < rowCombs[k].length; l++) {
-				if(spliced && l > 0) {
+				if (slicedRow) {
+					slicedRow = false;
+					l = rowCombs[k].length - 1;
+				} else if (spliced && l > 0) {
 					l--;
 				}
 				for(let t = 0; t < blankRows[k].length; t++) {
@@ -457,12 +458,10 @@ function solvePseudoku18(array) {
 			for(let b = 0; b < squs; b++) {
 				squInd++;
 				let x1 = a*squs;
-				let y1 = b*squs;
 				let x2 = a*squs + squs - 1;
-				let y2 = b*squs + squs - 1;
 				for (let j = x1; j <= x2; j++) {
 					for(let t = 0; t < blankRows[j].length; t++) {
-						if(spliced) {
+						if (spliced) {
 							spliced = false;
 							t = 0;
 						}
@@ -495,7 +494,7 @@ function solvePseudoku18(array) {
 	function generateRowLen(rowCombs){
 
 		// generate row lengths
-		var rowLen = new Array();
+		var rowLen = [];
 		for(var i = 0; i < rowCombs.length; i++) {
 			if(rowCombs[i].length == 0) {
 				rowLen.push(1);
@@ -509,7 +508,7 @@ function solvePseudoku18(array) {
 	function countPerms(array,rowLen) {
 
 		// generate cyclic permutations count
-		var permsCount = new Array();
+		var permsCount = [];
 		
 		for(var i = 0; i < rowLen[0]; i++) {
 			permsCount.push(0);
@@ -544,7 +543,7 @@ function solvePseudoku18(array) {
 	function generateSolution(rowCombs) {
 
 		// generate solution
-		var solution = new Array();
+		var solution = [];
 		for(var i = 0; i < rowCombs.length; i++) {
 			if(rowCombs[i][0]){
 				for(var j = 0; j < rowCombs[i][0].length; j++) {
@@ -604,7 +603,7 @@ function solvePseudoku18(array) {
 	// return solved pseudoku
 	return solvedPseudoku;
 }
-
+// console.log(sudoku3);
 // console.log(solvePseudoku18(sudoku3));
 // console.log(solvePseudoku18(sudoku4));
 
